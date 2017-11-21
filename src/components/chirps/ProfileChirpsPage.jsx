@@ -21,6 +21,7 @@ class ProfileChirpsPage extends Component {
       },
       chirpToDelete: '',
       followed: Auth.getSubscriptions().indexOf(this.props.match.params.username) > -1,
+      loading: true,
       error: ''
     }
 
@@ -60,7 +61,7 @@ class ProfileChirpsPage extends Component {
   }
 
   async componentWillReceiveProps () {
-    await this.setState({ chirps: [] })
+    await this.setState({ chirps: [], loading: true })
     chirpActions.allByUsername(this.props.match.params.username)
     toastr.info('Loading data')
   }
@@ -92,7 +93,8 @@ class ProfileChirpsPage extends Component {
       toastr.error(data.description)
     } else {
       this.setState({
-        chirps: data
+        chirps: data,
+        loading: false
       })
       toastr.success('Done')
     }
@@ -182,7 +184,7 @@ class ProfileChirpsPage extends Component {
   }
 
   render () {
-    const { chirps } = this.state
+    const { chirps, loading } = this.state
 
     return (
       <div className='content'>
@@ -204,7 +206,7 @@ class ProfileChirpsPage extends Component {
               onDelete={() => this.handleChirpDeleteClicked(chirp.author, chirp._id)}
               {...chirp} />)))
           : (<div className='chirp'>
-            <span className='loading'>No chirps in database</span>
+            <span className='loading'>{loading ? '' : 'No chirps in database'}</span>
           </div>)}
         </div>
       </div>
